@@ -63,7 +63,6 @@ public class ManageStudent {
    }
    
    /* Method to  READ all the students */
-   /* Method to  READ all the students */
    public void listStudents() {
       Session session = factory.openSession();
       Transaction tx = null;

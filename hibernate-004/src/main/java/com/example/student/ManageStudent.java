@@ -1,51 +1,25 @@
 package com.example.student;
 
-import java.util.List;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class ManageStudent {
+	public static void main(String[] args) {
+        // Get Hibernate Session
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
 
-    public Integer addStudent(String firstName, String lastName, int rollNumber) {
-    	Session session = org.hibernate.SessionFactoryImplementor.from(HibernateUtil.getSessionFactory()).openSession();
-        Transaction tx = null;
-        Integer studentID = null;
+        // Create Student with manually assigned rollNo
+        Student student = new Student(11, "John");
 
-        try {
-            tx = session.beginTransaction();
-            Student student = new Student(firstName, lastName, rollNumber);
-            studentID = (Integer) session.save(student);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-        return studentID;
+        // Save 
+        session.persist(student);
+
+        // Commit and Close Session
+        transaction.commit();
+        session.close();
+
+        System.out.println("Student saved successfully!");
     }
 
-    public void listStudents() {
-        Session session = HibernateUtil.getSessionFactory().createEntityManager().unwrap(Session.class);
-        Transaction tx = null;
-
-        try {
-            tx = session.beginTransaction();
-            List<Student> students = session.createQuery("FROM Student", Student.class).list();
-            for (Student student : students) {
-                System.out.println("ID: " + student.getId());
-                System.out.println("First Name: " + student.getFirstName());
-                System.out.println("Last Name: " + student.getLastName());
-                System.out.println("Roll Number: " + student.getRollNumber());
-                System.out.println("---------------");
-            }
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-    }
 }

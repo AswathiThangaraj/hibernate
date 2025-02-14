@@ -1,26 +1,36 @@
 package com.example.student;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import com.mysql.cj.xdevapi.SessionFactory;
+
 
 public class HibernateUtil {
-    private static final SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
 
     static {
         try {
+            // Create Configuration instance
             Configuration configuration = new Configuration();
-            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+
+            // Set Database Connection Properties
             configuration.setProperty("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver");
             configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/students");
             configuration.setProperty("hibernate.connection.username", "root");
             configuration.setProperty("hibernate.connection.password", "Achu2307@mysql");
-            configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+
+            // Set Hibernate Properties
+            configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
             configuration.setProperty("hibernate.show_sql", "true");
+            configuration.setProperty("hibernate.hbm2ddl.auto", "update"); // Use "validate" in production
+
+            // Add Annotated Class (Entity)
             configuration.addAnnotatedClass(Student.class);
+
+            // Build SessionFactory
             sessionFactory = configuration.buildSessionFactory();
-        } catch (Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed." + ex);
-            throw new ExceptionInInitializerError(ex);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ExceptionInInitializerError("Hibernate Configuration Failed!");
         }
     }
 
